@@ -51,7 +51,7 @@ public class MainController {
     // description: 아래 방법은 생성자를 사용한 IoC를 통한 DI이며 final로 지정하여 필수 멤버 변수로 지정 함 //
     // description: lombok 라이브러리의 @RequiredArgsConstructor 를 사용하여 필수 멤버 변수의 생성자를 만듬 //
     private final MainService mainService;
-    a
+    
 
     // http://localhost:4000/hello GET
     @RequestMapping(value = "hello", method = { RequestMethod.POST })
