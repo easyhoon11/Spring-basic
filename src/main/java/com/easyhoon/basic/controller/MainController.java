@@ -2,7 +2,6 @@ package com.easyhoon.basic.controller;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,11 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.easyhoon.basic.dto.request.PatchValidationDto;
 import com.easyhoon.basic.dto.request.PostRequestBodyDto;
+import com.easyhoon.basic.dto.request.PostUserRequestDto;
+import com.easyhoon.basic.dto.response.PostUserResponseDto;
 import com.easyhoon.basic.dto.response.TmpResponseDto;
 import com.easyhoon.basic.service.MainService;
-import com.easyhoon.basic.service.implement.MainServiceImplement;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 // description: Controller - 레이어드 아키텍처 상의 프레젠테이션 영역 //
@@ -133,5 +132,13 @@ public class MainController {
     public ResponseEntity<TmpResponseDto> getResponseEntity() {
         TmpResponseDto responseBody = new TmpResponseDto("안녕하세요.", 10);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
+    }
+
+    @PostMapping("user")
+    public ResponseEntity<? super PostUserResponseDto> postUser(
+        @RequestBody @Valid PostUserRequestDto requsetBody
+    ) {
+        ResponseEntity<? super PostUserResponseDto> response = mainService.postUser(requsetBody);
+        return response;
     }
 }
