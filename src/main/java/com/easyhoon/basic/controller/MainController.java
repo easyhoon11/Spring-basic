@@ -16,9 +16,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.easyhoon.basic.dto.request.PatchNicknameRequestDto;
 import com.easyhoon.basic.dto.request.PatchValidationDto;
 import com.easyhoon.basic.dto.request.PostRequestBodyDto;
 import com.easyhoon.basic.dto.request.PostUserRequestDto;
+import com.easyhoon.basic.dto.response.DeleteUserResponseDto;
+import com.easyhoon.basic.dto.response.PatchNicknameResponseDto;
 import com.easyhoon.basic.dto.response.PostUserResponseDto;
 import com.easyhoon.basic.dto.response.TmpResponseDto;
 import com.easyhoon.basic.service.MainService;
@@ -141,4 +144,21 @@ public class MainController {
         ResponseEntity<? super PostUserResponseDto> response = mainService.postUser(requsetBody);
         return response;
     }
+
+    @PatchMapping("nickname")
+    public ResponseEntity<? super PatchNicknameResponseDto> patchNickname(
+        @RequestBody @Valid PatchNicknameRequestDto requestBody
+    ){
+        ResponseEntity<? super PatchNicknameResponseDto> respons = mainService.patchNickname(requestBody);
+        return respons;
+    }
+
+    @DeleteMapping("user/{email}")
+    public ResponseEntity<? super DeleteUserResponseDto> deleteUser(
+        @PathVariable("email") String email
+    ){
+        ResponseEntity<? super DeleteUserResponseDto> response = mainService.deleteUser(email);
+        return response;
+    }
+    
 }
