@@ -24,6 +24,7 @@ import com.easyhoon.basic.dto.response.DeleteUserResponseDto;
 import com.easyhoon.basic.dto.response.PatchNicknameResponseDto;
 import com.easyhoon.basic.dto.response.PostUserResponseDto;
 import com.easyhoon.basic.dto.response.TmpResponseDto;
+import com.easyhoon.basic.provider.JwtProvider;
 import com.easyhoon.basic.service.MainService;
 
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,8 @@ public class MainController {
     // description: 아래 방법은 생성자를 사용한 IoC를 통한 DI이며 final로 지정하여 필수 멤버 변수로 지정 함 //
     // description: lombok 라이브러리의 @RequiredArgsConstructor 를 사용하여 필수 멤버 변수의 생성자를 만듬 //
     private final MainService mainService;
+
+    private final JwtProvider jwtProvider;
     
 
     // http://localhost:4000/hello GET
@@ -161,4 +164,23 @@ public class MainController {
         return response;
     }
     
+    @GetMapping("jwt/{value}")
+    public ResponseEntity<String> getJwt(
+        @PathVariable("value") String value
+    ){
+        String jwt = jwtProvider.create(value);
+        ResponseEntity<String> response = ResponseEntity.status(HttpStatus.OK).body(jwt);
+
+        return response;
+    }
+
+    @PostMapping("jwt/validate")
+    public ResponseEntity<String> validateJwt(
+        @RequestBody String jwt
+    ){
+        String subject = jwtProvider.validate(jwt);
+        ResponseEntity<String> response = ResponseEntity.status(HttpStatus.OK).body(subject);
+
+        return response;
+    }
 }
