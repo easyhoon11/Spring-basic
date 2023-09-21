@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,9 +21,11 @@ import com.easyhoon.basic.dto.request.PatchNicknameRequestDto;
 import com.easyhoon.basic.dto.request.PatchValidationDto;
 import com.easyhoon.basic.dto.request.PostRequestBodyDto;
 import com.easyhoon.basic.dto.request.PostUserRequestDto;
+import com.easyhoon.basic.dto.request.SingInRequestDto;
 import com.easyhoon.basic.dto.response.DeleteUserResponseDto;
 import com.easyhoon.basic.dto.response.PatchNicknameResponseDto;
 import com.easyhoon.basic.dto.response.PostUserResponseDto;
+import com.easyhoon.basic.dto.response.SignInResponseDto;
 import com.easyhoon.basic.dto.response.TmpResponseDto;
 import com.easyhoon.basic.provider.JwtProvider;
 import com.easyhoon.basic.service.MainService;
@@ -41,7 +44,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MainController {
 
-    // description: @Autowired - Java bean으로 등록되어 있는 클래스에 대해서 제어의 역전을 통해 의존성을 주입하는 어노테이션 //
+    // description: @Autowired - Java bean으로 등록되어 있는 클래스에 대해서 제어의 역전을 통해 의존성을 주입하는
+    // 어노테이션 //
     // @Autowired
     // description: Ioc를 통해서 DI 하는 방법 //
     // description: 1. 멤버변수를 사용한 DI //
@@ -52,11 +56,11 @@ public class MainController {
     // description: 생성자를 사용한 DI에서는 @Autowired를 사용하지 않아도 됨 //
 
     // description: 아래 방법은 생성자를 사용한 IoC를 통한 DI이며 final로 지정하여 필수 멤버 변수로 지정 함 //
-    // description: lombok 라이브러리의 @RequiredArgsConstructor 를 사용하여 필수 멤버 변수의 생성자를 만듬 //
+    // description: lombok 라이브러리의 @RequiredArgsConstructor 를 사용하여 필수 멤버 변수의 생성자를 만듬
+    // //
     private final MainService mainService;
 
     private final JwtProvider jwtProvider;
-    
 
     // http://localhost:4000/hello GET
     @RequestMapping(value = "hello", method = { RequestMethod.POST })
@@ -128,9 +132,8 @@ public class MainController {
 
     @PatchMapping("validation")
     public String validation(
-        // description: DTO에 작성된 유효성 검사를 적용하려한다면 @Valid 를 매개변수 자리에 추가 해줘야함 //
-        @Valid @RequestBody PatchValidationDto requestBody
-    ) {
+            // description: DTO에 작성된 유효성 검사를 적용하려한다면 @Valid 를 매개변수 자리에 추가 해줘야함 //
+            @Valid @RequestBody PatchValidationDto requestBody) {
         return requestBody.getArg1();
     }
 
@@ -142,32 +145,28 @@ public class MainController {
 
     @PostMapping("user")
     public ResponseEntity<? super PostUserResponseDto> postUser(
-        @RequestBody @Valid PostUserRequestDto requsetBody
-    ) {
+            @RequestBody @Valid PostUserRequestDto requsetBody) {
         ResponseEntity<? super PostUserResponseDto> response = mainService.postUser(requsetBody);
         return response;
     }
 
     @PatchMapping("nickname")
     public ResponseEntity<? super PatchNicknameResponseDto> patchNickname(
-        @RequestBody @Valid PatchNicknameRequestDto requestBody
-    ){
+            @RequestBody @Valid PatchNicknameRequestDto requestBody) {
         ResponseEntity<? super PatchNicknameResponseDto> respons = mainService.patchNickname(requestBody);
         return respons;
     }
 
     @DeleteMapping("user/{email}")
     public ResponseEntity<? super DeleteUserResponseDto> deleteUser(
-        @PathVariable("email") String email
-    ){
+            @PathVariable("email") String email) {
         ResponseEntity<? super DeleteUserResponseDto> response = mainService.deleteUser(email);
         return response;
     }
-    
+
     @GetMapping("jwt/{value}")
     public ResponseEntity<String> getJwt(
-        @PathVariable("value") String value
-    ){
+            @PathVariable("value") String value) {
         String jwt = jwtProvider.create(value);
         ResponseEntity<String> response = ResponseEntity.status(HttpStatus.OK).body(jwt);
 
@@ -176,11 +175,25 @@ public class MainController {
 
     @PostMapping("jwt/validate")
     public ResponseEntity<String> validateJwt(
-        @RequestBody String jwt
-    ){
+            @RequestBody String jwt) {
         String subject = jwtProvider.validate(jwt);
         ResponseEntity<String> response = ResponseEntity.status(HttpStatus.OK).body(subject);
 
         return response;
     }
+
+    @GetMapping("principle")
+    public ResponseEntity<String> getPrinciple(
+            // description: Spring Security Context에 등록되어 있는 접근 주체를 가져오는 어노테이션 //
+            @AuthenticationPrincipal String subject) {
+        return ResponseEntity.status(HttpStatus.OK).body(subject);
+    }
+
+    @PostMapping("sign-in")
+    public ResponseEntity<? super SignInResponseDto> signIn(
+            @RequestBody @Valid SingInRequestDto requestBody) {
+        ResponseEntity<? super SignInResponseDto> response = mainService.signIn(requestBody);
+        return response;
+    }
+
 }
